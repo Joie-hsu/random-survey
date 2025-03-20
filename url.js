@@ -56,7 +56,7 @@ function shuffleArray(array) {
 shuffleArray(finalList);
 
 // 4. 輸出結果
-console.log("隨機分配後的 600 份問卷清單：", finalList);
+console.log("隨機分配後的 120 份問卷清單：", finalList);
 console.log("最終分配統計：", distribution);
 
 // 5. 提供隨機問卷連結函數（用於網頁應用）
