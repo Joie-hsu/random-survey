@@ -6,8 +6,7 @@
  * 2. 包起來的網址之間用逗號分隔
  */
 
-
-// 設定可用的 Google Form 連結
+// 設定 Google Form 問卷網址
 const urls = [
     'https://docs.google.com/forms/d/e/1FAIpQLSdNYHLOrJWbOCkHNM6K9v2GmDwYJwvfPQhd2lLsfgsfg205XQ/viewform?usp=header',
     'https://docs.google.com/forms/d/e/1FAIpQLSdFYDhfyEs9ZKeeKHO1TwE7dh_cx5aTbgevDTrVAK-WnXU9zA/viewform?usp=header',
@@ -19,48 +18,50 @@ const urls = [
     'https://docs.google.com/forms/d/e/1FAIpQLSecrnF8JEc9ZgmXlwiel1SpZzEJ4NI7nTEi1-i6lt9-YEQOAw/viewform?usp=header'
 ];
 
-// 設定問卷最少分配次數
-const minCount = 2;
-const totalResponses = 20; // 假設總共需要 600 份問卷
+// 設定最低分配數量和總回應數
+const minCount = 20;
+const totalResponses = 600; // 假設總共需要 600 份問卷
 let distribution = {};
+let finalList = [];
 
-// 初始化，每個網址至少 60 次
+// 1. 初始化，每份問卷先分配 20 份
 urls.forEach(url => {
     distribution[url] = minCount;
+    for (let i = 0; i < minCount; i++) {
+        finalList.push(url);
+    }
 });
 
-// 剩餘待分配數量
+// 2. 剩餘數量，確保所有問卷均達標後才開始分配
 let remaining = totalResponses - (minCount * urls.length);
+let availableUrls = [...urls]; // 建立一個可分配額外數量的網址池
 
-// 隨機分配剩餘數量
 while (remaining > 0) {
-    let randomIndex = Math.floor(Math.random() * urls.length);
-    let selectedUrl = urls[randomIndex];
+    let randomIndex = Math.floor(Math.random() * availableUrls.length);
+    let selectedUrl = availableUrls[randomIndex];
+
     distribution[selectedUrl]++;
+    finalList.push(selectedUrl);
+
     remaining--;
 }
 
-// Fisher-Yates 洗牌演算法，讓分配順序更隨機
+// 3. 最後使用 Fisher-Yates 洗牌演算法隨機排列問卷
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
-
-// 產生最終的隨機化問卷清單
-let finalList = [];
-Object.keys(distribution).forEach(url => {
-    for (let i = 0; i < distribution[url]; i++) {
-        finalList.push(url);
-    }
-});
-
-// 打亂順序
 shuffleArray(finalList);
 
-// **模擬輸出**
+// 4. 輸出結果
 console.log("隨機分配後的 600 份問卷清單：", finalList);
 console.log("最終分配統計：", distribution);
 
-// **若需在網頁顯示，可以用 document.write 或 innerHTML**
+// 5. 提供隨機問卷連結函數（用於網頁應用）
+function getRandomFormLink() {
+    return finalList.pop(); // 取出一個問卷，確保不會重複給到
+}
+
+// **如果在網頁應用，可用 window.location.href = getRandomFormLink();**
