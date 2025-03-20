@@ -20,7 +20,7 @@ const urls = [
 
 // 設定最低分配數量和總回應數
 const minCount = 20;
-const totalResponses = 160; // 假設總共需要 600 份問卷
+const totalResponses = 2000; // 假設總共需要 2000 份問卷
 let distribution = {};
 let finalList = [];
 
@@ -56,7 +56,7 @@ function shuffleArray(array) {
 shuffleArray(finalList);
 
 // 4. 輸出結果
-console.log("隨機分配後的 120 份問卷清單：", finalList);
+console.log("隨機分配後的 2000 份問卷清單：", finalList);
 console.log("最終分配統計：", distribution);
 
 // 5. 提供隨機問卷連結函數（用於網頁應用）
