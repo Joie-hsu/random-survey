@@ -20,7 +20,7 @@ const urls = [
 
 // 設定最低分配數量和總回應數
 const minCount = 20;
-const totalResponses = 600; // 假設總共需要 600 份問卷
+const totalResponses = 160; // 假設總共需要 600 份問卷
 let distribution = {};
 let finalList = [];
 
