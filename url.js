@@ -19,12 +19,12 @@ const urls = [
 ];
 
 // 設定最低分配數量和總回應數
-const minCount = 40;
+const minCount = 30;
 const totalResponses = 2000; // 假設總共需要 2000 份問卷
 let distribution = {};
 let finalList = [];
 
-// 1. 初始化，每份問卷先分配 20 份
+// 1. 初始化，每份問卷先分配 30 份
 urls.forEach(url => {
     distribution[url] = minCount;
     for (let i = 0; i < minCount; i++) {
