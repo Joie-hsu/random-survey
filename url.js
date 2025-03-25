@@ -8,6 +8,7 @@
 
 
 // 设置 Google Form 问卷网址
+// 设置 Google Form 问卷网址
 function distributeSurveys(currentDistribution) {
     const urls = [
         'https://docs.google.com/forms/d/e/1FAIpQLSdNYHLOrJWbOCkHNM6K9v2GmDwYJwvfPQhd2lLsfgsfg205XQ/viewform?usp=header',
@@ -78,6 +79,8 @@ function distributeSurveys(currentDistribution) {
     }
     shuffleArray(finalList);
 
+    //console.log("finalList: ", finalList); // 打印 finalList 以检查问卷链接
+
     // 返回更新后的问卷列表和当前分配情况
     return { finalList, currentDistribution };
 }
@@ -105,3 +108,5 @@ function getRandomFormLink() {
 // 获取一个随机问卷链接
 const randomLink = getRandomFormLink();
 console.log("最终问卷分配统计：", currentDistribution);
+// console.log("随机分配后的问卷清单：", finalList);
+console.log("随机选择的问卷链接：", randomLink);
