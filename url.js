@@ -6,8 +6,6 @@
  * 2. 包起來的網址之間用逗號分隔
  */
 
-
-// 设置 Google Form 问卷网址
 // 设置 Google Form 问卷网址
 function distributeSurveys(currentDistribution) {
     const urls = [
