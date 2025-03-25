@@ -6,95 +6,61 @@
  * 2. 包起來的網址之間用逗號分隔
  */
 
-// 设置 Google Form 问卷网址
-function distributeSurveys(currentDistribution) {
-    const urls = [
-        'https://docs.google.com/forms/d/e/1FAIpQLSdNYHLOrJWbOCkHNM6K9v2GmDwYJwvfPQhd2lLsfgsfg205XQ/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSdFYDhfyEs9ZKeeKHO1TwE7dh_cx5aTbgevDTrVAK-WnXU9zA/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSfBmzSIywzUBa5IzGRcKKgiMyvcmPnb2hqEx6HePfP-FkIEqQ/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSf2SpgL5TX77mUfhfTeAZLcgo6vBi2G_8y29E4AW97HVdGj9w/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSeoY-lgYbkRl1XIZ2knYyn9bjxQPX5GrSAw0nm99G26nZNYKg/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSdu2lrzSGSlMb_ND5Cov-7KfjsPlDb5xODFiJKJMHxUzFBHNg/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSdEAQQT-Mldhv2G_gW19YCpF0229Swt1TdbEV5yDmKanr_PjA/viewform?usp=header',
-        'https://docs.google.com/forms/d/e/1FAIpQLSecrnF8JEc9ZgmXlwiel1SpZzEJ4NI7nTEi1-i6lt9-YEQOAw/viewform?usp=header'
-    ];
+// 設定 Google Form 問卷網址
+const urls = [
+    'https://docs.google.com/forms/d/e/1FAIpQLSdFYDhfyEs9ZKeeKHO1TwE7dh_cx5aTbgevDTrVAK-WnXU9zA/viewform?usp=header',
+    'https://docs.google.com/forms/d/e/1FAIpQLSfBmzSIywzUBa5IzGRcKKgiMyvcmPnb2hqEx6HePfP-FkIEqQ/viewform?usp=header',
+    'https://docs.google.com/forms/d/e/1FAIpQLSf2SpgL5TX77mUfhfTeAZLcgo6vBi2G_8y29E4AW97HVdGj9w/viewform?usp=header',
+    'https://docs.google.com/forms/d/e/1FAIpQLSeoY-lgYbkRl1XIZ2knYyn9bjxQPX5GrSAw0nm99G26nZNYKg/viewform?usp=header',
+    'https://docs.google.com/forms/d/e/1FAIpQLSdu2lrzSGSlMb_ND5Cov-7KfjsPlDb5xODFiJKJMHxUzFBHNg/viewform?usp=header',
+    'https://docs.google.com/forms/d/e/1FAIpQLSdEAQQT-Mldhv2G_gW19YCpF0229Swt1TdbEV5yDmKanr_PjA/viewform?usp=header',
+    'https://docs.google.com/forms/d/e/1FAIpQLSecrnF8JEc9ZgmXlwiel1SpZzEJ4NI7nTEi1-i6lt9-YEQOAw/viewform?usp=header'
+];
 
-    const minCount = 50;  // 每个问卷的最少分配数
-    const totalResponses = 2100;  // 假设总共需要 2100 份问卷（或者可以动态设置这个值）
-    let remaining = totalResponses;  // 计算剩余问卷的数量
+// 設定最低分配數量和總回應數
+const minCount = 50;
+const totalResponses = 2000; // 假設總共需要 2000 份問卷
+let distribution = {};
+let finalList = [];
 
-    let finalList = [];  // 用来存储最终的问卷列表
-
-    // 1. 初始化，将每个问卷按当前的分配数量填充 finalList
-    urls.forEach(url => {
-        let count = currentDistribution[url] || 0;  // 如果没有分配数量，默认为 0
-        for (let i = 0; i < count; i++) {
-            finalList.push(url);
-        }
-        remaining -= count;  // 更新剩余数量
-    });
-
-    // 2. 直到所有问卷都达到最小分配数（minCount），优先分配剩余份数
-    let allReachedMin = false;
-    let maxAttempts = 10000;  // 防止无限循环，设置最大分配尝试次数
-    let attempts = 0;
-
-    // 持续分配，直到每个问卷都达到 50 份
-    while (!allReachedMin && attempts < maxAttempts) {
-        attempts++;
-
-        // 检查是否所有问卷都已经达到最小分配数
-        allReachedMin = true;
-        urls.forEach(url => {
-            if ((currentDistribution[url] || 0) < minCount) {
-                allReachedMin = false;
-            }
-        });
-
-        // 如果某个问卷还未达到最小分配数，则继续为该问卷分配
-        if (!allReachedMin) {
-            let selectedUrl = urls.find(url => (currentDistribution[url] || 0) < minCount);
-            currentDistribution[selectedUrl] = (currentDistribution[selectedUrl] || 0) + 1;
-            finalList.push(selectedUrl);
-            remaining--;
-        }
+// 1. 初始化，每份問卷先分配 30 份
+urls.forEach(url => {
+    distribution[url] = minCount;
+    for (let i = 0; i < minCount; i++) {
+        finalList.push(url);
     }
+});
 
-    // 3. 一旦所有问卷都达到 50 份，开始均匀分配剩余的问卷
-    while (remaining > 0) {
-        let selectedUrl = urls[Math.floor(Math.random() * urls.length)];  // 随机选择一个问卷
-        currentDistribution[selectedUrl] = (currentDistribution[selectedUrl] || 0) + 1;
-        finalList.push(selectedUrl);
-        remaining--;
-    }
+// 2. 剩餘數量，確保所有問卷均達標後才開始分配
+let remaining = totalResponses - (minCount * urls.length);
+let availableUrls = [...urls]; // 建立一個可分配額外數量的網址池
 
-    // 4. 使用 Fisher-Yates 洗牌算法随机排列问卷
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-    shuffleArray(finalList);
+while (remaining > 0) {
+    let randomIndex = Math.floor(Math.random() * availableUrls.length);
+    let selectedUrl = availableUrls[randomIndex];
 
-    // 返回更新后的问卷列表和当前分配情况
-    return { finalList, currentDistribution };
+    distribution[selectedUrl]++;
+    finalList.push(selectedUrl);
+
+    remaining--;
 }
 
-// 假设这是您当前的问卷分配数量
-let currentDistribution = {
-    'https://docs.google.com/forms/d/e/1FAIpQLSdNYHLOrJWbOCkHNM6K9v2GmDwYJwvfPQhd2lLsfgsfg205XQ/viewform?usp=header': 81,
-    'https://docs.google.com/forms/d/e/1FAIpQLSdFYDhfyEs9ZKeeKHO1TwE7dh_cx5aTbgevDTrVAK-WnXU9zA/viewform?usp=header': 30,
-    'https://docs.google.com/forms/d/e/1FAIpQLSfBmzSIywzUBa5IzGRcKKgiMyvcmPnb2hqEx6HePfP-FkIEqQ/viewform?usp=header': 29,
-    'https://docs.google.com/forms/d/e/1FAIpQLSf2SpgL5TX77mUfhfTeAZLcgo6vBi2G_8y29E4AW97HVdGj9w/viewform?usp=header': 26,
-    'https://docs.google.com/forms/d/e/1FAIpQLSeoY-lgYbkRl1XIZ2knYyn9bjxQPX5GrSAw0nm99G26nZNYKg/viewform?usp=header': 22,
-    'https://docs.google.com/forms/d/e/1FAIpQLSdu2lrzSGSlMb_ND5Cov-7KfjsPlDb5xODFiJKJMHxUzFBHNg/viewform?usp=header': 43,
-    'https://docs.google.com/forms/d/e/1FAIpQLSdEAQQT-Mldhv2G_gW19YCpF0229Swt1TdbEV5yDmKanr_PjA/viewform?usp=header': 21,
-    'https://docs.google.com/forms/d/e/1FAIpQLSecrnF8JEc9ZgmXlwiel1SpZzEJ4NI7nTEi1-i6lt9-YEQOAw/viewform?usp=header': 23
-};
+// 3. 最後使用 Fisher-Yates 洗牌演算法隨機排列問卷
+function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+shuffleArray(finalList);
 
-// 调用函数进行问卷分配
-const { finalList, currentDistributionUpdated } = distributeSurveys(currentDistribution);
+// 4. 輸出結果
+console.log("隨機分配後的 2000 份問卷清單：", finalList);
+console.log("最終分配統計：", distribution);
 
-console.log("最终问卷分配统计：", currentDistribution);  // 确保返回了更新后的 currentDistribution
-//console.log("随机分配后的问卷清单：", finalList);
+// 5. 提供隨機問卷連結函數（用於網頁應用）
+function getRandomFormLink() {
+    return finalList.pop(); // 取出一個問卷，確保不會重複給到
+}
+
+// **如果在網頁應用，可用 window.location.href = getRandomFormLink();**
